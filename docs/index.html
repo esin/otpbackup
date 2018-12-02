@@ -15,9 +15,12 @@
     });
     scanner.addListener('scan', function(content) {
       console.log(content);
+      // DOCS: https://neocotic.com/qrious/
       const qr = new QRious({
         element: document.getElementById('qr'),
         value: content
+        level: "H"
+
       });
       alert(content);
     });
