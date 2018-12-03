@@ -4,6 +4,8 @@
 <head>
   <title>Instascan</title>
   <script type="text/javascript" src="instascan.min.js"></script>
+  <script type="text/javascript" src="qrious.min.js"></script>
+  <script type="text/javascript" src="pdfkit.js"></script>
 </head>
 
 <body>
@@ -20,7 +22,6 @@
         element: document.getElementById('qr'),
         value: content
         level: "H"
-
       });
       alert(content);
     });
@@ -35,10 +36,6 @@
     });
   </script>
   <canvas id="qr"></canvas>
-  <script src="qrious.min.js"></script>
-  <script>
-
-  </script>
 </body>
 
 </html>
