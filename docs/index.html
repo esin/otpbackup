@@ -23,7 +23,15 @@
         value: content
         level: "H"
       });
-      alert(content);
+      //alert(content);
+      var doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'in',
+        format: [2, 3.5]
+      })
+
+      doc.text('Hello world!', 1, 1)
+      doc.save('two-by-four.pdf');
     });
     Instascan.Camera.getCameras().then(function(cameras) {
       if (cameras.length > 0) {
