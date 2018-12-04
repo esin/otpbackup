@@ -2,14 +2,10 @@
 <html>
 
 <head>
-  <title>Instascan</title>
+  <title>otpbackup</title>
   <script type="text/javascript" src="instascan.min.js"></script>
   <script type="text/javascript" src="qrious.min.js"></script>
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
-</head>
-
-<body>
-  <video id="preview"></video>
   <script type="text/javascript">
     let scanner = new Instascan.Scanner({
       video: document.getElementById('preview'),
@@ -33,6 +29,7 @@
       doc.text('Hello world!', 1, 1);
       doc.save('two-by-four.pdf');
     });
+
     Instascan.Camera.getCameras().then(function(cameras) {
       if (cameras.length > 0) {
         scanner.start(cameras[1]);
@@ -43,6 +40,10 @@
       console.error(e);
     });
   </script>
+</head>
+
+<body>
+  <video id="preview"></video>
   <canvas id="qr"></canvas>
 </body>
 
