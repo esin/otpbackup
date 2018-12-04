@@ -5,7 +5,7 @@
   <title>Instascan</title>
   <script type="text/javascript" src="instascan.min.js"></script>
   <script type="text/javascript" src="qrious.min.js"></script>
-  <script type="text/javascript" src="pdfkit.js"></script>
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
 </head>
 
 <body>
@@ -28,9 +28,9 @@
         orientation: 'landscape',
         unit: 'in',
         format: [2, 3.5]
-      })
+      });
 
-      doc.text('Hello world!', 1, 1)
+      doc.text('Hello world!', 1, 1);
       doc.save('two-by-four.pdf');
     });
     Instascan.Camera.getCameras().then(function(cameras) {
