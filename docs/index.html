@@ -47,7 +47,7 @@
     function JsQRScannerReady() {
       var jbScanner = new JsQRScanner(onQRCodeScanned);
       jbScanner.setSnapImageMaxSize(300);
-      var scannerParentElement = document.getElementById("preview");
+      var scannerParentElement = document.getElementById("scanner");
       if (scannerParentElement) {
         jbScanner.appendTo(scannerParentElement);
       }
