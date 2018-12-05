@@ -3,14 +3,21 @@
 
 <head>
   <title>otpbackup</title>
-  <script type="text/javascript" src="instascan.min.js"></script>
   <script type="text/javascript" src="qrious.min.js"></script>
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
-  <script type="text/javascript" src="jsqrscanner.nocache.js"></script>
+  <link type="text/css" rel="stylesheet" href="JsQRScanner.css">
+  <script type="text/javascript" src="jsPretty/jsqrscanner.nocache.js"></script>
+
 </head>
 
 <body>
-  <video id="preview"></video>
+  <div class="row-element">
+    <div class="qrscanner" id="scanner">
+    </div>
+  </div>
+
+  <canvas id="qr"></canvas>
+
   <script type="text/javascript">
     function onQRCodeScanned(scannedText) {
       console.log(scannedText);
@@ -42,7 +49,6 @@
       }
     }
   </script>
-  <canvas id="qr"></canvas>
 </body>
 
 </html>
