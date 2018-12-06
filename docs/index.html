@@ -6,26 +6,20 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script type="text/javascript" src="qrious.min.js"></script>
+  <script type="text/javascript" src="instascan.min.js"></script>
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
-  <link type="text/css" rel="stylesheet" href="JsQRScanner.css">
-  <script type="text/javascript" src="jsPretty/jsqrscanner.nocache.js"></script>
 
 </head>
 
 <body>
-<div class="row-element-set row-element-set-QRScanner">
-  <div class="row-element">
-    <div class="qrscanner" id="scanner">
-    </div>
-  </div>
-
-  <!--<canvas id="qr"></canvas> -->
-  </div>
-
+  <video id="preview"></video>
   <script type="text/javascript">
-    function onQRCodeScanned(scannedText) {
-      console.log(scannedText);
-      alert(scannedText);
+    let scanner = new Instascan.Scanner({
+      video: document.getElementById('preview'),
+      mirror: false
+    });
+    scanner.addListener('scan', function(content) {
+      console.log(content);
       // DOCS: https://neocotic.com/qrious/
       const qr = new QRious({
         element: document.getElementById('qr'),
@@ -33,26 +27,27 @@
         level: "H"
       });
       //alert(content);
+      var imgData = qr.toDataURL();
       var doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'in',
-        format: [2, 3.5]
+        unit: 'in'
       });
-
-      doc.text('Hello world!', 1, 1);
-      doc.save('two-by-four.pdf');
-    }
-
-    //this function will be called when JsQRScanner is ready to use
-    function JsQRScannerReady() {
-      var jbScanner = new JsQRScanner(onQRCodeScanned);
-      jbScanner.setSnapImageMaxSize(300);
-      var scannerParentElement = document.getElementById("scanner");
-      if (scannerParentElement) {
-        jbScanner.appendTo(scannerParentElement);
+      //doc.text('Hello world!', 1, 1);
+      doc.rect(0, 0, 3, 2.5);
+      doc.addImage(imgData, 'PNG', 0.1, 0.1, 1, 1);
+      doc.save('card.pdf');
+      doc.output('datauri');
+    });
+    Instascan.Camera.getCameras().then(function(cameras) {
+      if (cameras.length > 0) {
+        scanner.start(cameras[1]);
+      } else {
+        console.error('No cameras found.');
       }
-    }
+    }).catch(function(e) {
+      console.error(e);
+    });
   </script>
+  <canvas id="qr"></canvas>
 </body>
 
 </html>
