@@ -24,9 +24,10 @@
       const qr = new QRious({
         element: document.getElementById('qr'),
         value: String(content),
-        level: "H"
+        level: "H",
+        size: 144
       });
-      //alert(content);
+
       var imgData = qr.toDataURL();
       var doc = new jsPDF({
       });
