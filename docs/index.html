@@ -29,11 +29,10 @@
       //alert(content);
       var imgData = qr.toDataURL();
       var doc = new jsPDF({
-        unit: 'in'
       });
-      //doc.text('Hello world!', 1, 1);
-      doc.rect(0, 0, 3, 2.5);
-      doc.addImage(imgData, 'PNG', 0.1, 0.1, 1, 1);
+
+      doc.rect(20, 20, 85.6, 53.98);
+      doc.addImage(imgData, 'PNG', 28, 28, 38, 38);
       doc.save('card.pdf');
       doc.output('datauri');
     });
