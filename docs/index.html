@@ -34,6 +34,20 @@
 
       doc.rect(20, 20, 85.6, 53.98);
       doc.addImage(imgData, 'PNG', 28, 28, 38, 38);
+
+      doc.setFont("courier");
+      doc.setFontType("normal");
+      doc.text(28, 54, 'gmlastik@gmail.com', null, null, 'center');
+
+      doc.setFont("courier");
+      doc.setFontType("normal");
+      doc.text(32, 54, 'Key: ');
+
+      doc.setFont("courier");
+      doc.setFontType("bold");
+      doc.text(32, 58, 'HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ');
+
+
       doc.save('card.pdf');
       doc.output('datauri');
     });
