@@ -19,13 +19,13 @@
       mirror: false
     });
     scanner.addListener('scan', function(content) {
-      console.log(content);
+      //console.log(content);
       // DOCS: https://neocotic.com/qrious/
       const qr = new QRious({
         element: document.getElementById('qr'),
         value: String(content),
         level: "H",
-        size: 210
+        size: 224
       });
 
       var imgData = qr.toDataURL();
