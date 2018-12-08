@@ -25,31 +25,77 @@
         element: document.getElementById('qr'),
         value: String(content),
         level: "H",
-        size: 144
+        size: 182
       });
 
       var imgData = qr.toDataURL();
-      var doc = new jsPDF({
-      });
 
-      doc.rect(20, 20, 85.6, 53.98);
-      doc.addImage(imgData, 'PNG', 28, 28, 38, 38);
+      var doc = new jsPDF({});
+      // ~ ISO 7810 ID-1
+      doc.rect(20, 20, 54, 86);
+      // qr code
+      doc.addImage(imgData, 'PNG', 23, 23, 48, 48);
 
-      doc.setFont("courier");
-      doc.setFontType("normal");
-      doc.text(28, 54, 'gmlastik@gmail.com', null, null, 'center');
+      // qr code
+      //    doc.rect(23, 23, 48, 48);
+      // https://github.com/hectorm/otpauth/blob/master/docs/file/src/uri.js.html
+      const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:issuer|label|secret|algorithm|digits|counter|period)=[^&]+)+)$`, 'i');
 
-      doc.setFont("courier");
-      doc.setFontType("normal");
-      doc.text(32, 54, 'Key: ');
+      let uriGroups;
 
-      doc.setFont("courier");
-      doc.setFontType("bold");
-      doc.text(32, 58, 'HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ');
+      try {
+        uriGroups = decodeURIComponent(imgData).match(OTPURI_REGEX);
+      } catch (err) {}
+
+      if (!Array.isArray(uriGroups)) {
+        console.log('Invalid URI format');
+      }
+
+      const uriType = uriGroups[1].toLowerCase();
+      const uriLabel = uriGroups[2].split(/:(.+)/, 2);
+
+      const uriParams = uriGroups[3].split('&').reduce(function(acc, cur) {
+        const pairArr = cur.split(/=(.+)/, 2);
+        const pairKey = pairArr[0].toLowerCase();
+        const pairVal = pairArr[1];
+        const pairAcc = acc;
+
+        pairAcc[pairKey] = pairVal;
+        return pairAcc;
+      }, {});
+
+      var labelText = 'Label:\n';
+      labelText = labelText + uriLabel[uriLabel.length == 2 ? 1 : 0];
+      var labelLabel = doc
+        .setFont('courier')
+        .setFontSize(8)
+        .splitTextToSize(labelText, 49);
+      doc.text(labelLabel, 23, 76);
 
 
-      doc.save('card.pdf');
+      var code = 'Secret:\n';
+      if (typeof uriParams.secret !== 'undefined') {
+        var splitSecret = String(uriParams.secret).match(/.{1,4}/g).join(' ');
+        code = code + splitSecret;
+      } else {
+        throw new TypeError('Missing or invalid \'secret\' parameter');
+      }
+
+      var codeLines = doc
+        .setFont('courier')
+        .setFontSize(12)
+        .splitTextToSize(code, 49);
+      doc.text(codeLines, 23, 86);
+
+      doc.setFontSize(6);
+      doc.text('Colded with https://otpcold.store', 30, 105);
+
+
+      //doc.save('card.pdf');
       doc.output('datauri');
+
+      //doc.addImage(imgData, 'PNG', 28, 28, 38, 38);
+
     });
     Instascan.Camera.getCameras().then(function(cameras) {
       if (cameras.length > 0) {
@@ -61,7 +107,7 @@
       console.error(e);
     });
   </script>
-  <canvas id="qr"></canvas>
+  <!-- <canvas id="qr"></canvas> -->
 </body>
 
 </html>
