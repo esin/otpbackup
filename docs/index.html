@@ -25,7 +25,7 @@
         element: document.getElementById('qr'),
         value: String(content),
         level: "H",
-        size: 182
+        size: 210
       });
 
       var imgData = qr.toDataURL();
@@ -90,7 +90,7 @@
       doc.text(codeLines, 23, 86);
 
       doc.setFontSize(6);
-      doc.text('❄️ Cooled with https://otpcold.store ❄️', 30, 105);
+      doc.text('Cooled with https://otpcold.store', 30, 105);
 
       doc.save('otpcold.pdf');
       //doc.output('datauri');
