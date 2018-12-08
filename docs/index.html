@@ -36,6 +36,8 @@
       // qr code
       doc.addImage(imgData, 'PNG', 23, 23, 48, 48);
 
+      console.log(content);
+
       // qr code
       //    doc.rect(23, 23, 48, 48);
       // https://github.com/hectorm/otpauth/blob/master/docs/file/src/uri.js.html
@@ -44,7 +46,7 @@
       let uriGroups;
 
       try {
-        uriGroups = decodeURIComponent(imgData).match(OTPURI_REGEX);
+        uriGroups = decodeURIComponent(content).match(OTPURI_REGEX);
       } catch (err) {}
 
       if (!Array.isArray(uriGroups)) {
