@@ -13,6 +13,23 @@
   <div>
     <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
   </div>
+  <div>
+    <a class="button" id="startButton">Start</a>
+    <a class="button" id="resetButton">Reset</a>
+  </div>
+  <div>
+    <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+  </div>
+
+  <div id="sourceSelectPanel" style="display:none">
+    <label for="sourceSelect">Change video source:</label>
+    <select id="sourceSelect" style="max-width:400px">
+    </select>
+  </div>
+  <label>Result:</label>
+  <blockquote>
+    <p id="result"></p>
+  </blockquote>
   <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <script async type="text/javascript" src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
   <script async type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
