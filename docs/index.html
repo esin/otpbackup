@@ -5,107 +5,134 @@
   <title>OTP Cold Storage Generator</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="text/javascript" src="instascan.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-  <script type="text/javascript" src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+
 
 </head>
 
 <body>
-  <video id="preview"></video>
+  <div>
+    <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+  </div>
+  <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script async type="text/javascript" src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+  <script async type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
   <script type="text/javascript">
-    let scanner = new Instascan.Scanner({
-      video: document.getElementById('preview'),
-      mirror: false
-    });
-    scanner.addListener('scan', function(content) {
-      //console.log(content);
-      // DOCS: https://neocotic.com/qrious/
-      const qr = new QRious({
-        element: document.getElementById('qr'),
-        value: String(content),
-        level: "H",
-        size: 228
-      });
+    window.addEventListener('load', function() {
+      let selectedDeviceId;
+      const codeReader = new ZXing.BrowserQRCodeReader()
+      console.log('ZXing code reader initialized')
+      codeReader.getVideoInputDevices()
+        .then((videoInputDevices) => {
+          const sourceSelect = document.getElementById('sourceSelect')
+          selectedDeviceId = videoInputDevices[0].deviceId
+          if (videoInputDevices.length >= 1) {
+            videoInputDevices.forEach((element) => {
+              const sourceOption = document.createElement('option')
+              sourceOption.text = element.label
+              sourceOption.value = element.deviceId
+              sourceSelect.appendChild(sourceOption)
+            })
+            sourceSelect.onchange = () => {
+              selectedDeviceId = sourceSelect.value;
+            };
+            const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+            sourceSelectPanel.style.display = 'block'
+          }
+          document.getElementById('startButton').addEventListener('click', () => {
+            codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
+              console.log(result)
+              //document.getElementById('result').textContent = result.text
+              content = result.text
+              const qr = new QRious({
+                element: document.getElementById('qr'),
+                value: String(content),
+                level: "H",
+                size: 240
+              });
 
-      var imgData = qr.toDataURL();
+              var imgData = qr.toDataURL();
 
-      var doc = new jsPDF({});
-      // ~ ISO 7810 ID-1
-      doc.rect(20, 20, 54, 86);
-      // qr code
-      doc.addImage(imgData, 'PNG', 23, 23, 48, 48);
+              var doc = new jsPDF({});
+              // ~ ISO 7810 ID-1
+              doc.rect(20, 20, 54, 86);
+              // qr code
+              doc.addImage(imgData, 'PNG', 23, 23, 48, 48);
 
-      console.log(content);
+              console.log(content);
 
-      // qr code
-      //    doc.rect(23, 23, 48, 48);
-      // https://github.com/hectorm/otpauth/blob/master/docs/file/src/uri.js.html
-      const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:issuer|label|secret|algorithm|digits|counter|period)=[^&]+)+)$`, 'i');
+              // qr code
+              //    doc.rect(23, 23, 48, 48);
+              // https://github.com/hectorm/otpauth/blob/master/docs/file/src/uri.js.html
+              const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:issuer|label|secret|algorithm|digits|counter|period)=[^&]+)+)$`, 'i');
 
-      let uriGroups;
+              let uriGroups;
 
-      try {
-        uriGroups = decodeURIComponent(content).match(OTPURI_REGEX);
-      } catch (err) {}
+              try {
+                uriGroups = decodeURIComponent(content).match(OTPURI_REGEX);
+              } catch (err) {}
 
-      if (!Array.isArray(uriGroups)) {
-        console.log('Invalid URI format');
-      }
+              if (!Array.isArray(uriGroups)) {
+                console.log('Invalid URI format');
+              }
 
-      const uriType = uriGroups[1].toLowerCase();
-      const uriLabel = uriGroups[2].split(/:(.+)/, 2);
+              const uriType = uriGroups[1].toLowerCase();
+              const uriLabel = uriGroups[2].split(/:(.+)/, 2);
 
-      const uriParams = uriGroups[3].split('&').reduce(function(acc, cur) {
-        const pairArr = cur.split(/=(.+)/, 2);
-        const pairKey = pairArr[0].toLowerCase();
-        const pairVal = pairArr[1];
-        const pairAcc = acc;
+              const uriParams = uriGroups[3].split('&').reduce(function(acc, cur) {
+                const pairArr = cur.split(/=(.+)/, 2);
+                const pairKey = pairArr[0].toLowerCase();
+                const pairVal = pairArr[1];
+                const pairAcc = acc;
 
-        pairAcc[pairKey] = pairVal;
-        return pairAcc;
-      }, {});
+                pairAcc[pairKey] = pairVal;
+                return pairAcc;
+              }, {});
 
-      var labelText = 'Label:\n';
-      labelText = labelText + uriLabel[uriLabel.length == 2 ? 1 : 0];
-      var labelLabel = doc
-        .setFont('courier')
-        .setFontSize(8)
-        .splitTextToSize(labelText, 49);
-      doc.text(labelLabel, 23, 76);
+              var labelText = 'Label:\n';
+              labelText = labelText + uriLabel[uriLabel.length == 2 ? 1 : 0];
+              var labelLabel = doc
+                .setFont('courier')
+                .setFontSize(8)
+                .splitTextToSize(labelText, 49);
+              doc.text(labelLabel, 23, 76);
 
 
-      var code = 'Secret:\n';
-      if (typeof uriParams.secret !== 'undefined') {
-        var splitSecret = String(uriParams.secret).match(/.{1,4}/g).join(' ');
-        code = code + splitSecret;
-      } else {
-        throw new TypeError('Missing or invalid \'secret\' parameter');
-      }
+              var code = 'Secret:\n';
+              if (typeof uriParams.secret !== 'undefined') {
+                var splitSecret = String(uriParams.secret).match(/.{1,4}/g).join(' ');
+                code = code + splitSecret;
+              } else {
+                throw new TypeError('Missing or invalid \'secret\' parameter');
+              }
 
-      var codeLines = doc
-        .setFont('courier')
-        .setFontSize(12)
-        .splitTextToSize(code, 49);
-      doc.text(codeLines, 23, 86);
+              var codeLines = doc
+                .setFont('courier')
+                .setFontSize(12)
+                .splitTextToSize(code, 49);
+              doc.text(codeLines, 23, 86);
 
-      doc.setFontSize(6);
-      doc.text('Cooled with https://otpcold.store', 30, 105);
+              doc.setFontSize(6);
+              doc.text('Cooled with https://otpcold.store', 30, 105);
 
-      doc.save('otpcold.pdf');
-      //doc.output('datauri');
-    });
-    Instascan.Camera.getCameras().then(function(cameras) {
-      if (cameras.length > 0) {
-        scanner.start(cameras[1]);
-      } else {
-        console.error('No cameras found.');
-      }
-    }).catch(function(e) {
-      console.error(e);
-    });
+              doc.save('otpcold.pdf');
+              //doc.output('datauri');
+            }).catch((err) => {
+              console.error(err)
+              document.getElementById('result').textContent = err
+            })
+            console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
+          })
+          document.getElementById('resetButton').addEventListener('click', () => {
+            codeReader.reset()
+            console.log('Reset.')
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    })
   </script>
-  <!-- <canvas id="qr"></canvas> -->
+
 </body>
 
 </html>
