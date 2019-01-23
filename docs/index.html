@@ -84,7 +84,8 @@
             sourceSelectPanel.style.display = 'block'
           }
 
-          document.getElementById('startButton').addEventListener('click', () => {
+          //document.getElementById('startButton').addEventListener('click', () => {
+          if ok {
             codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
               console.log(result)
               //document.getElementById('result').textContent = result.text
@@ -167,7 +168,7 @@
               document.getElementById('result').textContent = err
             })
             console.log(`Started continous decode from camera with id ${selectedDeviceId}`)
-          })
+          }
           document.getElementById('resetButton').addEventListener('click', () => {
             codeReader.reset()
             console.log('Reset.')
