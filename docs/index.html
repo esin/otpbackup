@@ -10,8 +10,14 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 100%;
+  width: 50vw;
+  height: 50vw;
   overflow: hidden;
+}
+.video-container:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
 }
 .video-container video {
   /* Make video to at least 100% wide and tall */
